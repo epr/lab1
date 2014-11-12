@@ -1,5 +1,5 @@
 <?php
-
+require_once "html5/Parser.php";
 getCourses("/kurser/");
 
 function getCourses($url) {
@@ -18,7 +18,7 @@ function getCourses($url) {
 function doSomethingWithCourses($course) {
     $courseName = $course->nodeValue;
     $courseLink = $course->getAttribute("href");
-    $xpath = xpathGet($courseLink);
+    $xpath = html5($courseLink);
 
     echo "<div>" . $courseName . " -> " . $courseLink . "</div>";
 }
@@ -37,9 +37,21 @@ function curlGet($url) {
 function xpathGet($url) {
     $data = curlGet($url);
     $dom = new DOMDocument();
-    libxml_use_internal_errors(true);
+    #libxml_use_internal_errors(true);
     $result = $dom->loadHTML($data);
-    libxml_clear_errors();
+    #libxml_clear_errors();
+    if ($result) {
+        return (new DOMXPath($dom));
+    }
+    else {
+        die("Fel vid inläsning av HTML");
+    }
+}
+
+function html5($url) {
+    $data = curlGet($url);
+    $dom = HTML5_Parser::parse($data);
+    $result = $dom->loadHTML($data);
     if ($result) {
         return (new DOMXPath($dom));
     }
