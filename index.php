@@ -31,7 +31,7 @@ function doSomethingWithCourses($course) {
     else {
         $courseSyllabus = "no information";
     }
-    $courseIntroList = $xpath->query("//div[@class = 'entry-content'][0]//p");
+    $courseIntroList = $xpath->query("//article[contains(@class, 'start-page')]//p");
     if ($courseIntroList->length > 0) {
         $courseIntro = $courseIntroList->item(0)->nodeValue;
     }
