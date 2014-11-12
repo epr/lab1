@@ -37,7 +37,10 @@ function curlGet($url) {
 function xpathGet($url) {
     $data = curlGet($url);
     $dom = new DOMDocument();
-    if ($dom->loadHTML($data)) {
+    libxml_use_internal_errors(true);
+    $result = $dom->loadHTML($data);
+    libxml_clear_errors();
+    if ($result) {
         return (new DOMXPath($dom));
     }
     else {
