@@ -8,10 +8,9 @@ if ($dom->loadHTML($data)){
 else {
     die("Fel vid inläsning av HTML");
 }
-$courselist = $xpath->query("//ul[@id = 'blogs-list']//div[@class = 'item-title']");
+$courselist = $xpath->query("//ul[@id = 'blogs-list']//div[@class = 'item-title']/a");
 foreach ($courselist as $course) {
-    #echo "<div>" . $course->nodeValue . "</div>";
-    var_dump($course->nodeValue);
+    echo "<div>" . $course->nodeValue . " -> " . $course->getAttribute("href") . "</div>";
 }
 
 function curl_get_request($url) {
