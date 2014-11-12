@@ -1,9 +1,10 @@
 <?php
 #error_reporting(E_ALL & ~E_WARNING);
-require_once "html5/Parser.php"; /*https://github.com/html5lib/html5lib-php*/
+#require_once "html5/Parser.php"; /*https://github.com/html5lib/html5lib-php*/
 echoHtmlStart();
 getCourses("/kurser/");
 echoHtmlEnd();
+$courseCount = 0;
 
 function getCourses($url) {
     $url = "https://coursepress.lnu.se" . $url; //links are relative
@@ -12,10 +13,10 @@ function getCourses($url) {
     foreach ($courseList as $course) {
         doSomethingWithCourses($course);
     }
-    $nextPage = $xpath->query("//div[@id = 'blog-dir-pag-bottom']//a[contains(@class, 'next')]"); //find next page button
+    /*$nextPage = $xpath->query("//div[@id = 'blog-dir-pag-bottom']//a[contains(@class, 'next')]"); //find next page button
     if ($nextPage->length > 0) { //check for last page
         getCourses($nextPage->item(0)->getAttribute("href"));
-    }
+    }*/
 }
 
 function doSomethingWithCourses($course) {
@@ -31,16 +32,30 @@ function doSomethingWithCourses($course) {
     else {
         $courseSyllabus = "no information";
     }
-    $courseIntroList = $xpath->query("//article[contains(@class, 'start-page')]//p");
+    $courseIntroList = $xpath->query("//article[contains(@class, 'start-page')]");
     if ($courseIntroList->length > 0) {
         $courseIntro = $courseIntroList->item(0)->nodeValue;
     }
     else {
         $courseIntro = "no information";
     }
+    $latestEntryList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//div[@class = 'entry-content']");
+    if ($latestEntryList->length > 0) {
+        $latestEntry = $latestEntryList->item(0)->nodeValue;
+    }
+    else {
+        $latestEntry = "no information";
+    }
+    $latestEntryByLineList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//p[@class = 'entry-byline']");
+    if ($latestEntryByLineList->length > 0) {
+        $latestEntryByLine = $latestEntryByLineList->item(0)->nodeValue;
+    }
+    else {
+        $latestEntryByLine = "no information";
+    }
 
     echo "<p>" . $courseCode . " <a href=\"" . $courseLink . "\">" . $courseName . "</a> <a href=\"" . $courseSyllabus . "\">Syllabus</a></p>
-    <p>" . $courseIntro . "</p>";
+    <p>" . $courseIntro . "</p>" . $latestEntry . $latestEntryByLine;
 }
 
 function curlGet($url) {
