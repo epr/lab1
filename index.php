@@ -4,17 +4,10 @@ getCourses("/kurser/");
 
 function getCourses($url) {
     $url = "https://coursepress.lnu.se" . $url; //links are relative
-    $data = curl_get_request($url);
-    $dom = new DOMDocument();
-    if ($dom->loadHTML($data)){
-        $xpath = new DOMXPath($dom);
-    }
-    else {
-        die("Fel vid inläsning av HTML");
-    }
+    $xpath = xpathGet($url);
     $courselist = $xpath->query("//ul[@id = 'blogs-list']//div[@class = 'item-title']/a[contains(@href, 'kurs')]");
     foreach ($courselist as $course) {
-        echo "<div>" . $course->nodeValue . " -> " . $course->getAttribute("href") . "</div>";
+        doSomethingWithCourses($course);
     }
     $nextpage = $xpath->query("//div[@id = 'blog-dir-pag-bottom']//a[contains(@class, 'next')]"); //find next page button
     if ($nextpage->length > 0) { //check for last page
@@ -22,7 +15,15 @@ function getCourses($url) {
     }
 }
 
-function curl_get_request($url) {
+function doSomethingWithCourses($course) {
+    $courseName = $course->nodeValue;
+    $courseLink = $course->getAttribute("href");
+    $xpath = xpathGet($courseLink);
+
+    echo "<div>" . $courseName . " -> " . $courseLink . "</div>";
+}
+
+function curlGet($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
@@ -31,4 +32,15 @@ function curl_get_request($url) {
     $data = curl_exec($ch);
     curl_close($ch);
     return $data;
+}
+
+function xpathGet($url) {
+    $data = curlGet($url);
+    $dom = new DOMDocument();
+    if ($dom->loadHTML($data)) {
+        return (new DOMXPath($dom));
+    }
+    else {
+        die("Fel vid inläsning av HTML");
+    }
 }
