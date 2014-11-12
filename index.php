@@ -1,13 +1,19 @@
 <?php
 
-$req = curl_get_request("http://coursepress.lnu.se/kurser/");
+$data = curl_get_request("https://coursepress.lnu.se/kurser/");
 $dom = new DOMDocument();
-$dom->loadHTML($req);
-$xpath = new DOMXPath($dom);
-$courselist = $xpath->query("//ul[@id = 'blogs-list']");
-foreach ($courselist as $course) {
-    echo($course->nodeValue);
+if ($dom->loadHTML($data)){
+    $xpath = new DOMXPath($dom);
 }
+else {
+    die("Fel vid inläsning av HTML");
+}
+$courselist = $xpath->query("//ul[@id = 'blogs-list']//div[@class = 'item-title']");
+foreach ($courselist as $course) {
+    #echo "<div>" . $course->nodeValue . "</div>";
+    var_dump($course->nodeValue);
+}
+
 function curl_get_request($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
