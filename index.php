@@ -1,8 +1,9 @@
 <?php
 
-getCourses("https://coursepress.lnu.se/kurser/");
+getCourses("/kurser/");
 
 function getCourses($url) {
+    $url = "https://coursepress.lnu.se" . $url; //links are relative
     $data = curl_get_request($url);
     $dom = new DOMDocument();
     if ($dom->loadHTML($data)){
@@ -15,8 +16,10 @@ function getCourses($url) {
     foreach ($courselist as $course) {
         echo "<div>" . $course->nodeValue . " -> " . $course->getAttribute("href") . "</div>";
     }
-    $nextpage = $xpath->query("//div[@id = 'blog-dir-pag-bottom']//a[@class = 'next']");
-    getCourses($nextpage->item(0)->getAttribute("href"));
+    $nextpage = $xpath->query("//div[@id = 'blog-dir-pag-bottom']//a[contains(@class, 'next')]"); //find next page button
+    if ($nextpage->length > 0) { //check for last page
+        getCourses($nextpage->item(0)->getAttribute("href"));
+    }
 }
 
 function curl_get_request($url) {
