@@ -4,7 +4,7 @@ class CourseScraper {
     private $courseCount = 0;
     private $coursesArray = [];
     private $jsonFileName = "coursescraper.json";
-    private $cacheSeconds = 300;
+    private $cacheSeconds = 3;
 
     public function __construct($url) {
         if (file_exists($this->jsonFileName)) {
@@ -57,21 +57,32 @@ class CourseScraper {
         if ($courseIntroList->length > 0) {
             $courseIntro = $courseIntroList->item(0)->nodeValue;
         }
-        $latestEntryList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']");
-        $latestEntry = $noInfoText;
-        if ($latestEntryList->length > 0) {
-            $latestEntry = $latestEntryList->item(0)->nodeValue;
+        $latestHeadlineList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']//a");
+        $latestHeadline = $noInfoText;
+        if ($latestHeadlineList->length > 0) {
+            $latestHeadline = $latestHeadlineList->item(0)->nodeValue;
         }
-
-        #echo "<p>" . $courseCode . " <a href=\"" . $courseLink . "\">" . $courseName . "</a> <a href=\"" . $courseSyllabus . "\">Syllabus</a></p>
-        #<p>" . $courseIntro . "</p>" . $latestEntry;
-
+        $latestAuthorList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']//strong");
+        $latestAuthor = $noInfoText;
+        if ($latestAuthorList->length > 0) {
+            $latestAuthor = $latestAuthorList->item(0)->nodeValue;
+        }
+        $latestTimeList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']//p");
+        $latestTime = $noInfoText;
+        if ($latestTimeList->length > 0) {
+            $latestTime = $latestTimeList->item(0)->nodeValue;
+            $latestTime = strstr($latestTime, "2");
+            $latestTime = substr($latestTime, 0, strpos($latestTime, " av"));
+        }
+        $latestArray = array("headline"=>$latestHeadline,
+                             "author"=>$latestAuthor,
+                             "time"=>$latestTime);
         $courseArray = array("course name"=>$courseName,
             "course url"=>$courseLink,
             "course code"=>$courseCode,
             "syllabus url"=>$courseSyllabus,
             "course intro"=>$courseIntro,
-            "latest entry"=>$latestEntry);
+            "latest entry"=>$latestArray);
         $this->coursesArray[] = $courseArray;
     }
 
