@@ -8,15 +8,14 @@ echoHtmlEnd();
 class CourseScraper {
     private $courseCount = 0;
     private $coursesArray = [];
-    private $timeStamp;
 
     public function __construct($url) {
         $this->getCourses($url);
         $scrapeArray = array("courses"=>$this->coursesArray,
                              "count"=>$this->courseCount,
-                             "timestamp"=>"test");
+                             "timestamp"=>time()); //seconds since 1970
         $jsonData = json_encode($scrapeArray);
-        var_dump($jsonData);
+        file_put_contents("coursescraper.json", $jsonData);
     }
 
     public function getCourses($url) {
@@ -76,7 +75,7 @@ class CourseScraper {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT,"eprcz09");
+        curl_setopt($ch, CURLOPT_USERAGENT,"eprcz09"); //identification
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
