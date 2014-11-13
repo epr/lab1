@@ -55,7 +55,7 @@ class CourseScraper {
         $courseIntroList = $xpath->query("//article[contains(@class, 'start-page')]");
         $courseIntro = $noInfoText;
         if ($courseIntroList->length > 0) {
-            $courseIntro = $courseIntroList->item(0)->nodeValue;
+            $courseIntro = trim($courseIntroList->item(0)->nodeValue);
         }
         $latestHeadlineList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']//a");
         $latestHeadline = $noInfoText;
@@ -91,6 +91,7 @@ class CourseScraper {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_ENCODING ,"UTF-8");
         curl_setopt($ch, CURLOPT_USERAGENT,"eprcz09"); //identification
         $data = curl_exec($ch);
         curl_close($ch);
