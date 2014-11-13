@@ -20,42 +20,55 @@ function getCourses($url) {
 }
 
 function doSomethingWithCourses($course) {
+    $noInfoText = "no information";
     $courseName = $course->nodeValue;
     $courseLink = $course->getAttribute("href");
     $xpath = xpathGet($courseLink);
     $courseCodeList = $xpath->query("//div[@id = 'header-wrapper']//li");
-    $courseCode = $courseCodeList->item(2)->nodeValue;
+    if ($courseCodeList->length > 0) {
+        $courseCode = $courseCodeList->item(2)->nodeValue;
+    }
+    else {
+        $courseCode = $noInfoText;
+    }
     $courseSyllabusList = $xpath->query("//ul[@class = 'sub-menu']//a[contains(@href, 'coursesyllabus')]");
     if ($courseSyllabusList->length > 0) {
         $courseSyllabus = $courseSyllabusList->item(0)->getAttribute("href");
     }
     else {
-        $courseSyllabus = "no information";
+        $courseSyllabus = $noInfoText;
     }
     $courseIntroList = $xpath->query("//article[contains(@class, 'start-page')]");
     if ($courseIntroList->length > 0) {
         $courseIntro = $courseIntroList->item(0)->nodeValue;
     }
     else {
-        $courseIntro = "no information";
+        $courseIntro = $noInfoText;
     }
-    $latestEntryList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//div[@class = 'entry-content']");
+    $latestEntryList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//header[@class = 'entry-header']");
     if ($latestEntryList->length > 0) {
         $latestEntry = $latestEntryList->item(0)->nodeValue;
     }
     else {
-        $latestEntry = "no information";
+        $latestEntry = $noInfoText;
     }
-    $latestEntryByLineList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//p[@class = 'entry-byline']");
+    /*$latestEntryByLineList = $xpath->query("//*[@id = 'content']//article[contains(@class, 'type-post')]//p[@class = 'entry-byline']");
     if ($latestEntryByLineList->length > 0) {
         $latestEntryByLine = $latestEntryByLineList->item(0)->nodeValue;
     }
     else {
         $latestEntryByLine = "no information";
-    }
+    }*/
 
     echo "<p>" . $courseCode . " <a href=\"" . $courseLink . "\">" . $courseName . "</a> <a href=\"" . $courseSyllabus . "\">Syllabus</a></p>
-    <p>" . $courseIntro . "</p>" . $latestEntry . $latestEntryByLine;
+    <p>" . $courseIntro . "</p>" . $latestEntry;
+
+    $courseArray = array("course name"=>$courseName,
+                         "course url"=>$courseLink,
+                         "course code"=>$courseCode,
+                         "syllabus url"=>$courseSyllabus,
+                         "course intro"=>$courseIntro,
+                         "latest entry"=>$latestEntry);
 }
 
 function curlGet($url) {
