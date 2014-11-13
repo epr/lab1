@@ -8,14 +8,24 @@ echoHtmlEnd();
 class CourseScraper {
     private $courseCount = 0;
     private $coursesArray = [];
+    private $jsonFileName = "coursescraper.json";
 
     public function __construct($url) {
-        $this->getCourses($url);
+        if (file_exists($this->jsonFileName)) {
+            $jsonFile = file_get_contents($this->jsonFileName);
+            $decodedData = json_decode($jsonFile, true); //decode into associative array
+            $timestamp = $decodedData["timestamp"];
+            var_dump($timestamp);
+        }
+        else {
+            echo "false";
+        }
+        /*$this->getCourses($url);
         $scrapeArray = array("courses"=>$this->coursesArray,
                              "count"=>$this->courseCount,
                              "timestamp"=>time()); //seconds since 1970
         $jsonData = json_encode($scrapeArray);
-        file_put_contents("coursescraper.json", $jsonData);
+        file_put_contents($this->jsonFileName, $jsonData);*/
     }
 
     public function getCourses($url) {
