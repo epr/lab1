@@ -4,7 +4,7 @@ class CourseScraper {
     private $courseCount = 0;
     private $coursesArray = [];
     private $jsonFileName = "coursescraper.json";
-    private $cacheSeconds = 3;
+    private $cacheSeconds = 300;
 
     public function __construct($url) {
         if (file_exists($this->jsonFileName)) {
