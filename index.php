@@ -7,12 +7,16 @@ echoHtmlEnd();
 
 class CourseScraper {
     private $courseCount = 0;
-    private $courseArray = [];
+    private $coursesArray = [];
     private $timeStamp;
 
     public function __construct($url) {
         $this->getCourses($url);
-        echo $this->courseCount;
+        $scrapeArray = array("courses"=>$this->coursesArray,
+                             "count"=>$this->courseCount,
+                             "timestamp"=>"test");
+        $jsonData = json_encode($scrapeArray);
+        var_dump($jsonData);
     }
 
     public function getCourses($url) {
@@ -55,8 +59,8 @@ class CourseScraper {
             $latestEntry = $latestEntryList->item(0)->nodeValue;
         }
 
-        echo "<p>" . $courseCode . " <a href=\"" . $courseLink . "\">" . $courseName . "</a> <a href=\"" . $courseSyllabus . "\">Syllabus</a></p>
-    <p>" . $courseIntro . "</p>" . $latestEntry;
+        #echo "<p>" . $courseCode . " <a href=\"" . $courseLink . "\">" . $courseName . "</a> <a href=\"" . $courseSyllabus . "\">Syllabus</a></p>
+    #<p>" . $courseIntro . "</p>" . $latestEntry;
 
         $courseArray = array("course name"=>$courseName,
             "course url"=>$courseLink,
@@ -64,6 +68,7 @@ class CourseScraper {
             "syllabus url"=>$courseSyllabus,
             "course intro"=>$courseIntro,
             "latest entry"=>$latestEntry);
+        $this->coursesArray[] = $courseArray;
     }
 
     public function curlGet($url) {
